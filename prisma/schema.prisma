@@ -1,0 +1,29 @@
+// Define your database provider
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Define your models
+model UserApiLimit {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  count     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserSubscription {
+  id                     String    @id @default(cuid())
+  userId                 String    @unique // Ensures one subscription per user
+  paypalSubscriptionId   String?   @unique // Ensures unique subscription ID
+  paypalPlanId           String?   // Optional, adjust based on usage
+  paypalCurrentPeriodEnd DateTime? @default(now())
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}

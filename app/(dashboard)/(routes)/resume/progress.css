@@ -1,0 +1,25 @@
+.progress-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.progress-bar {
+  width: 100%; /* Adjust the width as needed */
+  background-color: #f3f3f3;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 20px;
+  background-color: #4caf50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  transition: width 0.5s ease;
+}
