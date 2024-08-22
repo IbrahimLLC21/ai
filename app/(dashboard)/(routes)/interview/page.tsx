@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, Mic } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -9,7 +8,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { ChatCompletionRequestMessage } from "openai";
 import { toast } from "react-hot-toast";
-import { useTranslation } from "react-i18next"; // Import the hook
+import { useTranslation } from "react-i18next";
 
 import Heading from "@/components/heading";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
@@ -19,10 +18,8 @@ import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
-
 import { cn } from "@/lib/utils";
 import { useProModal } from "@/hooks/use-pro-modal";
-
 import { formSchema } from "./constants";
 import UserDetailsModal from "@/components/user-details-modal";
 
@@ -40,7 +37,7 @@ const languages = [
 ];
 
 const ConversationPage = () => {
-  const { t } = useTranslation(); // Initialize translation
+  const { t } = useTranslation();
   const proModal = useProModal();
   const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
@@ -48,14 +45,13 @@ const ConversationPage = () => {
   const [transcribedText, setTranscribedText] = useState("");
   const [interimText, setInterimText] = useState("");
   const [selectedLang, setSelectedLang] = useState("en");
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const timeoutRef = useRef<any>(null);
   const shouldRestartRef = useRef(false);
   const hasShownWarningRef = useRef(false);
   const isRecognitionRunningRef = useRef(false);
-
   const [isModalOpen, setIsModalOpen] = useState(true);
- const [userDetails, setUserDetails] = useState({ name: "", position: "", company: "" });
+  const [userDetails, setUserDetails] = useState({ name: "", position: "", company: "" });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -67,10 +63,10 @@ const ConversationPage = () => {
 
   useEffect(() => {
     if ("webkitSpeechRecognition" in window) {
-      const recognition = new window.webkitSpeechRecognition();
+      const recognition = new (window as { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
-      recognition.lang = selectedLang; // Set the selected language
+      recognition.lang = selectedLang;
 
       recognition.onresult = (event) => {
         let interimTranscription = "";
@@ -104,7 +100,7 @@ const ConversationPage = () => {
     } else {
       toast.error(t("speechRecognitionNotSupported"));
     }
-  }, [selectedLang]); // Recreate the recognition object when language changes
+  }, [selectedLang, t]);
 
   useEffect(() => {
     form.setValue("prompt", transcribedText + interimText);
@@ -168,7 +164,7 @@ const ConversationPage = () => {
       form.reset();
 
       if (recognitionRef.current) {
-        stopTranscription(); // Stop the transcription
+        stopTranscription();
       }
     } catch (error: any) {
       if (error?.response?.status === 403) proModal.onOpen();
