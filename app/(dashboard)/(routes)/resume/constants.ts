@@ -32,7 +32,9 @@ export const formSchema = z.object({
   projects: z.array(z.object({
     name: z.string().optional(),
     description: z.string().optional(),
-  })).optional(),
+  })).optional( 
+    
+  ),
   technicalSkills: z.array(z.string().optional()).optional(),
   softSkills: z.array(z.string().optional()).optional(),
   additionalSkills: z.array(z.string().optional()).optional(),

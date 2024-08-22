@@ -36,6 +36,12 @@ const languages = [
   { code: 'es', label: 'Spanish' },
 ];
 
+declare global {
+  interface Window {
+    webkitSpeechRecognition: any;
+  }
+}
+
 const ConversationPage = () => {
   const { t } = useTranslation();
   const proModal = useProModal();
@@ -45,13 +51,14 @@ const ConversationPage = () => {
   const [transcribedText, setTranscribedText] = useState("");
   const [interimText, setInterimText] = useState("");
   const [selectedLang, setSelectedLang] = useState("en");
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any>(null);
   const timeoutRef = useRef<any>(null);
   const shouldRestartRef = useRef(false);
   const hasShownWarningRef = useRef(false);
   const isRecognitionRunningRef = useRef(false);
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [userDetails, setUserDetails] = useState({ name: "", position: "", company: "" });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -63,12 +70,12 @@ const ConversationPage = () => {
 
   useEffect(() => {
     if ("webkitSpeechRecognition" in window) {
-      const recognition = new (window as { webkitSpeechRecognition: typeof SpeechRecognition }).webkitSpeechRecognition();
+      const recognition = new (window as any).webkitSpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
       recognition.lang = selectedLang;
-
-      recognition.onresult = (event) => {
+  
+      recognition.onresult = (event: any) => {
         let interimTranscription = "";
         let finalTranscription = "";
         for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -82,7 +89,7 @@ const ConversationPage = () => {
         setTranscribedText((prev) => prev + finalTranscription);
         setInterimText(interimTranscription);
       };
-
+  
       recognition.onend = () => {
         isRecognitionRunningRef.current = false;
         if (shouldRestartRef.current) {
@@ -95,12 +102,13 @@ const ConversationPage = () => {
           }, 100);
         }
       };
-
+  
       recognitionRef.current = recognition;
     } else {
       toast.error(t("speechRecognitionNotSupported"));
     }
   }, [selectedLang, t]);
+  
 
   useEffect(() => {
     form.setValue("prompt", transcribedText + interimText);
@@ -133,7 +141,7 @@ const ConversationPage = () => {
     }
   };
 
-  const handleModalSubmit = (details) => {
+  const handleModalSubmit = (details: { name: string, position: string, company: string }) => {
     setUserDetails(details);
     setIsModalOpen(false);
   };
@@ -143,26 +151,25 @@ const ConversationPage = () => {
       setIsModalOpen(true);
       return;
     }
-
+  
     try {
+      // Include user details in the content
       const userMessage: ChatCompletionRequestMessage = {
         role: "user",
-        content: values.prompt,
-        name: userDetails.name,
-        position: userDetails.position,
-        company: userDetails.company,
+        content: `User Name: ${userDetails.name}\nPosition: ${userDetails.position}\nCompany: ${userDetails.company}\nMessage: ${values.prompt}`,
       };
+      
       const newMessages = [...messages, userMessage];
-
+  
       const response = await axios.post("/api/conversation", {
         messages: newMessages,
       });
-
+  
       setMessages((current) => [...current, userMessage, response.data]);
       setTranscribedText("");
       setInterimText("");
       form.reset();
-
+  
       if (recognitionRef.current) {
         stopTranscription();
       }
@@ -173,6 +180,7 @@ const ConversationPage = () => {
       router.refresh();
     }
   };
+  
 
   return (
     <div>
@@ -264,8 +272,8 @@ const ConversationPage = () => {
       </div>
       <UserDetailsModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
+        onClose={() => setIsModalOpen(false)}
       />
     </div>
   );
