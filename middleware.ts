@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import type { NextRequest, NextFetchEvent } from 'next/server';
 import { authMiddleware } from "@clerk/nextjs";
 
 // Define locale handling middleware
@@ -16,12 +16,12 @@ const clerkMiddleware = authMiddleware({
 });
 
 // Combine locale handling with Clerk authentication
-export async function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest, event: NextFetchEvent) {
   const localeHandledResponse = handleLocale(request);
-  
-  // Apply Clerk authentication middleware
-  const clerkHandledResponse = await clerkMiddleware(request);
-  
+
+  // Apply Clerk authentication middleware with the request and event
+  const clerkHandledResponse = await clerkMiddleware(request, event);
+
   // If locale handling is not needed for authentication-protected routes
   if (localeHandledResponse.redirected) {
     return localeHandledResponse;

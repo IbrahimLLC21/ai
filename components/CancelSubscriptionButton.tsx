@@ -27,7 +27,7 @@ export default function CancelSubscriptionButton() {
 
   return (
     <Button
-      variant="danger"
+      variant="destructive"
       disabled={loading}
       onClick={handleCancelSubscription}
     >

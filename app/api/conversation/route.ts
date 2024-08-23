@@ -1,9 +1,16 @@
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import { Configuration, OpenAIApi } from "openai";
+import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
 
 import { checkApiLimit, increaseApiLimit } from "@/lib/api-limit";
 import { checkSubscription } from "@/lib/subscription";
+
+// Define the CustomMessage type
+interface CustomMessage extends ChatCompletionRequestMessage {
+  name?: string;
+  position?: string;
+  company?: string;
+}
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -17,7 +24,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { messages } = body;
 
-    if (!userId) return new NextResponse("UnAuthorized", { status: 401 });
+    if (!userId) return new NextResponse("Unauthorized", { status: 401 });
 
     if (!configuration.apiKey)
       return new NextResponse("OpenAI API Key Not Configured", { status: 500 });
@@ -32,13 +39,13 @@ export async function POST(req: Request) {
       return new NextResponse("Free Trial Has Expired", { status: 403 });
 
     // Customize the response by modifying the prompt
-    const customMessages = messages.map((message: ChatCompletionRequestMessage) => {
+    const customMessages = (messages as CustomMessage[]).map((message) => {
       return {
         role: message.role,
         content: message.role === "user"
-          ? `As a candidate named ${message.name} interviewing for the ${message.position} position at ${message.company}, answer the following interview question: ${message.content}. Please provide a natural and concise response without repeating the question or referencing the technology used to generate responses.`
+          ? `As a candidate named ${message.name ?? 'Anonymous'} interviewing for the ${message.position ?? 'unknown'} position at ${message.company ?? 'unknown company'}, answer the following interview question: ${message.content}. Please provide a natural and concise response without repeating the question or referencing the technology used to generate responses.`
           : message.content
-      }
+      };
     });
 
     const response = await openai.createChatCompletion({

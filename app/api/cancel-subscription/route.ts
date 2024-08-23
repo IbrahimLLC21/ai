@@ -56,7 +56,7 @@ export async function POST(req: Request) {
 
     return new NextResponse("Subscription cancelled successfully", { status: 200 });
   } catch (error) {
-    console.error("[CANCEL_SUBSCRIPTION_ERROR]", error.response?.data || error.message);
+    console.error("[CANCEL_SUBSCRIPTION_ERROR]", (error as Error).message || error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }

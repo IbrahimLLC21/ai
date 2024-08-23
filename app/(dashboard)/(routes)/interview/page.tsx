@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, Mic } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -6,7 +7,6 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { ChatCompletionRequestMessage } from "openai";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 
@@ -18,8 +18,10 @@ import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
+
 import { cn } from "@/lib/utils";
 import { useProModal } from "@/hooks/use-pro-modal";
+
 import { formSchema } from "./constants";
 import UserDetailsModal from "@/components/user-details-modal";
 
@@ -36,17 +38,19 @@ const languages = [
   { code: 'es', label: 'Spanish' },
 ];
 
-declare global {
-  interface Window {
-    webkitSpeechRecognition: any;
-  }
+import { ChatCompletionRequestMessage as OpenAIChatCompletionRequestMessage } from "openai"; // Import the base type
+
+interface CustomChatCompletionRequestMessage extends OpenAIChatCompletionRequestMessage {
+  name?: string;
+  position?: string;
+  company?: string;
 }
 
 const ConversationPage = () => {
   const { t } = useTranslation();
   const proModal = useProModal();
   const router = useRouter();
-  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const [messages, setMessages] = useState<CustomChatCompletionRequestMessage[]>([]);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [transcribedText, setTranscribedText] = useState("");
   const [interimText, setInterimText] = useState("");
@@ -56,9 +60,9 @@ const ConversationPage = () => {
   const shouldRestartRef = useRef(false);
   const hasShownWarningRef = useRef(false);
   const isRecognitionRunningRef = useRef(false);
+
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [userDetails, setUserDetails] = useState({ name: "", position: "", company: "" });
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -70,12 +74,12 @@ const ConversationPage = () => {
 
   useEffect(() => {
     if ("webkitSpeechRecognition" in window) {
-      const recognition = new (window as any).webkitSpeechRecognition();
+      const recognition = new window.webkitSpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
       recognition.lang = selectedLang;
-  
-      recognition.onresult = (event: any) => {
+
+      recognition.onresult = (event: { resultIndex: any; results: string | any[]; }) => {
         let interimTranscription = "";
         let finalTranscription = "";
         for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -89,7 +93,7 @@ const ConversationPage = () => {
         setTranscribedText((prev) => prev + finalTranscription);
         setInterimText(interimTranscription);
       };
-  
+
       recognition.onend = () => {
         isRecognitionRunningRef.current = false;
         if (shouldRestartRef.current) {
@@ -102,13 +106,12 @@ const ConversationPage = () => {
           }, 100);
         }
       };
-  
+
       recognitionRef.current = recognition;
     } else {
       toast.error(t("speechRecognitionNotSupported"));
     }
   }, [selectedLang, t]);
-  
 
   useEffect(() => {
     form.setValue("prompt", transcribedText + interimText);
@@ -141,7 +144,7 @@ const ConversationPage = () => {
     }
   };
 
-  const handleModalSubmit = (details: { name: string, position: string, company: string }) => {
+  const handleModalSubmit = (details: { name: string; position: string; company: string; }) => {
     setUserDetails(details);
     setIsModalOpen(false);
   };
@@ -151,27 +154,28 @@ const ConversationPage = () => {
       setIsModalOpen(true);
       return;
     }
-  
+
     try {
-      // Include user details in the content
-      const userMessage: ChatCompletionRequestMessage = {
+      const userMessage: CustomChatCompletionRequestMessage = {
         role: "user",
-        content: `User Name: ${userDetails.name}\nPosition: ${userDetails.position}\nCompany: ${userDetails.company}\nMessage: ${values.prompt}`,
+        content: values.prompt,
+        name: userDetails.name,
+        position: userDetails.position,
+        company: userDetails.company,
       };
-      
       const newMessages = [...messages, userMessage];
-  
+
       const response = await axios.post("/api/conversation", {
         messages: newMessages,
       });
-  
+
       setMessages((current) => [...current, userMessage, response.data]);
       setTranscribedText("");
       setInterimText("");
       form.reset();
-  
+
       if (recognitionRef.current) {
-        stopTranscription();
+        stopTranscription(); // Stop the transcription
       }
     } catch (error: any) {
       if (error?.response?.status === 403) proModal.onOpen();
@@ -180,7 +184,6 @@ const ConversationPage = () => {
       router.refresh();
     }
   };
-  
 
   return (
     <div>
@@ -272,8 +275,8 @@ const ConversationPage = () => {
       </div>
       <UserDetailsModal
         isOpen={isModalOpen}
-        onSubmit={handleModalSubmit}
         onClose={() => setIsModalOpen(false)}
+        onSubmit={handleModalSubmit}
       />
     </div>
   );

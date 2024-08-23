@@ -8,6 +8,12 @@ import Docxtemplater from 'docxtemplater';
 import fs from 'fs';
 import path from 'path';
 
+// Define the Message interface
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -22,13 +28,13 @@ export async function POST(req: Request) {
 
     // Parse request body
     const body = await req.json();
-    const { messages } = body;
+    const { messages }: { messages: Message[] } = body;
 
     if (!configuration.apiKey) return new NextResponse("OpenAI API Key Not Configured", { status: 500 });
     if (!messages) return new NextResponse("Messages are required", { status: 400 });
 
     // Extract user details from the message content
-    const userMessage = messages.find(m => m.role === 'user');
+    const userMessage = messages.find((m: Message) => m.role === 'user');
     if (!userMessage || !userMessage.content) {
       return new NextResponse("Invalid message format", { status: 400 });
     }
@@ -67,19 +73,19 @@ export async function POST(req: Request) {
     });
 
     // Format functions
-    const formatArray = (arr) => Array.isArray(arr) ? arr.map(item => `- ${item}`).join('\n') : '';
+    const formatArray = (arr: any[]) => Array.isArray(arr) ? arr.map(item => `- ${item}`).join('\n') : '';
     
-    const formatEducation = (education) => {
+    const formatEducation = (education: any[]) => {
       if (!Array.isArray(education)) return '';
       return education.map(ed => `${ed.institution}\n${ed.degree}\n${ed.startDate} - ${ed.endDate}`).join('\n\n');
     };
     
-    const formatCertifications = (certifications) => {
+    const formatCertifications = (certifications: any[]) => {
       if (!Array.isArray(certifications)) return '';
       return certifications.map(cert => `- ${cert.name}\n${cert.institution}`).join('\n\n');
     };
 
-    const formatWorkExperience = (workExperience) => {
+    const formatWorkExperience = (workExperience: any[]) => {
       if (!Array.isArray(workExperience)) return '';
     
       return workExperience.map(exp => {

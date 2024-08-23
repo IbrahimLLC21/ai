@@ -24,7 +24,7 @@ export const formSchema = z.object({
   workExperience: z.array(z.object({
     company: z.string().optional(),
     position: z.string().optional(),
-    companySummary: z.string().optional(), // updated field name
+    companySummary: z.string().optional(),
     accomplishments: z.string().optional(),
     startDate: z.string().optional(),
     endDate: z.string().optional(),
@@ -32,13 +32,11 @@ export const formSchema = z.object({
   projects: z.array(z.object({
     name: z.string().optional(),
     description: z.string().optional(),
-  })).optional( 
-    
-  ),
-  technicalSkills: z.array(z.string().optional()).optional(),
-  softSkills: z.array(z.string().optional()).optional(),
-  additionalSkills: z.array(z.string().optional()).optional(),
-  languages: z.array(z.string().optional()).optional(),
+  })).optional(),
+  technicalSkills: z.array(z.unknown()).optional(),
+  softSkills: z.array(z.unknown()).optional(),
+  additionalSkills: z.array(z.unknown()).optional(),
+  languages: z.array(z.unknown()).optional(),
   certifications: z.array(z.object({
     name: z.string().optional(),
     institution: z.string().optional(),

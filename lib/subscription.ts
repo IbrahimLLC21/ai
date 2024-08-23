@@ -46,7 +46,7 @@ export const checkSubscription = async () => {
 
     return isValid;
   } catch (error) {
-    console.error("Error checking subscription:", error.message || error);
+    console.error("Error checking subscription:", (error as Error).message || error);
     return false;
   }
 };

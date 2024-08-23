@@ -88,9 +88,9 @@ export default function ResumePage() {
     name: "projects",
   });
 
-  const { fields: techSkillsFields, append: appendTechSkill } = useFieldArray({
+  const { fields: technicalSkillFields, append: appendTechnicalSkill } = useFieldArray({
     control: form.control,
-    name: "technicalSkills",
+    name: "technicalSkills"
   });
 
   const { fields: softSkillsFields, append: appendSoftSkill } = useFieldArray({
@@ -98,12 +98,12 @@ export default function ResumePage() {
     name: "softSkills",
   });
 
-  const { fields: additionalSkillsFields, append: appendAdditionalSkill } = useFieldArray({
+  const { fields: additionalSkillFields, append: appendAdditionalSkill } = useFieldArray({
     control: form.control,
     name: "additionalSkills",
   });
 
-  const { fields: languagesFields, append: appendLanguage } = useFieldArray({
+  const { fields: languageFields, append: appendLanguage } = useFieldArray({
     control: form.control,
     name: "languages",
   });
@@ -433,7 +433,7 @@ export default function ResumePage() {
         return (
           <>
             <h3 className="text-lg font-bold">{t('technicalSkills.title')}</h3>
-            {techSkillsFields.map((item, index) => (
+            {technicalSkillFields.map((item, index) => (
               <div key={item.id}>
                 <FormField
                   name={`technicalSkills.${index}`}
@@ -447,7 +447,7 @@ export default function ResumePage() {
                 />
               </div>
             ))}
-            <Button type="button" onClick={() => appendTechSkill("")}>
+            <Button type="button" onClick={() => appendTechnicalSkill("")}>
               {t('addTechnicalSkill')}
             </Button>
           </>
@@ -479,7 +479,7 @@ export default function ResumePage() {
         return (
           <>
             <h3 className="text-lg font-bold">{t('additionalSkills.title')}</h3>
-            {additionalSkillsFields.map((item, index) => (
+            {additionalSkillFields.map((item, index) => (
               <div key={item.id}>
                 <FormField
                   name={`additionalSkills.${index}`}
@@ -502,7 +502,7 @@ export default function ResumePage() {
         return (
           <>
             <h3 className="text-lg font-bold">{t('languages.title')}</h3>
-            {languagesFields.map((item, index) => (
+            {languageFields.map((item, index) => (
               <div key={item.id}>
                 <FormField
                   name={`languages.${index}`}

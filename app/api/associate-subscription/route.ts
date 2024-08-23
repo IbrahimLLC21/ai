@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     console.log("Subscription associated successfully:", result);
     return new NextResponse("Subscription associated successfully", { status: 200 });
   } catch (error) {
-    console.error("Error associating subscription:", error.message || error);
+    console.error("Error associating subscription:", (error as Error).message || error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

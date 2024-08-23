@@ -16,13 +16,14 @@ export default function LandingHero() {
       <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl space-y-5 font-extrabold">
         <h1>{t('heroTitle')}</h1>
         <div className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-          <TypewriterComponent
-            options={{
-              strings: t('typewriterStrings', { returnObjects: true }), // Use returnObjects for an array
-              autoStart: true,
-              loop: true
-            }}
-          />
+        <TypewriterComponent
+  options={{
+    strings: t('typewriterStrings'), // Should be a string or string[]
+    autoStart: true,
+    loop: true
+  }}
+/>
+
         </div>
       </div>
       <div className="text-sm md:text-xl font-light text-zinc-400">

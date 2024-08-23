@@ -1,15 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, CSSProperties } from "react";
 import Modal from "react-modal";
 
 // Ensure Modal is correctly bound to the app
 Modal.setAppElement("body");
 
-const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
+// Define the type for the component props
+interface UserDetailsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (details: { name: string; position: string; company: string }) => void;
+}
+
+const UserDetailsModal: React.FC<UserDetailsModalProps> = ({ isOpen, onClose, onSubmit }) => {
   const [name, setName] = useState("");
   const [position, setPosition] = useState("");
   const [company, setCompany] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (name && position && company) {
       onSubmit({ name, position, company });
@@ -63,7 +70,7 @@ const UserDetailsModal = ({ isOpen, onClose, onSubmit }) => {
   );
 };
 
-const customStyles = {
+const customStyles: ReactModal.Styles = {
   content: {
     top: '50%',
     left: '50%',
@@ -77,7 +84,7 @@ const customStyles = {
   },
 };
 
-const inputStyle = {
+const inputStyle: CSSProperties = {
   width: '100%',
   padding: '8px',
   margin: '4px 0 10px',
@@ -86,7 +93,7 @@ const inputStyle = {
   border: '1px solid #ccc',
 };
 
-const buttonStyle = {
+const buttonStyle: CSSProperties = {
   backgroundColor: '#6D28D9', // Matching button color to conversation page
   color: '#fff',
   padding: '10px',
@@ -95,7 +102,7 @@ const buttonStyle = {
   cursor: 'pointer',
 };
 
-const labelStyle = {
+const labelStyle: CSSProperties = {
   display: 'block',
   fontWeight: 'bold',
   marginBottom: '4px',

@@ -94,7 +94,7 @@ export async function GET() {
       status: 200,
     });
   } catch (error) {
-    console.error("[PAYPAL_ERROR]", error.response?.data || error.message);
+    console.error("[PAYPAL_ERROR]", "An unexpected error occurred");
     return new NextResponse("Internal Error", { status: 500 });
   }
 }

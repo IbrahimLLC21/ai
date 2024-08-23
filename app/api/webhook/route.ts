@@ -56,21 +56,23 @@ export async function POST(req: Request) {
 
     return new NextResponse(null, { status: 200 });
   } catch (error) {
-    console.error("Webhook Error:", error.message || error);
+    console.error("Webhook Error:", (error as Error).message || error);
     return new NextResponse("Webhook Error", { status: 500 });
   }
 }
 
 async function getUserIdFromSubscription(subscriptionId: string): Promise<string | null> {
   try {
-    const mapping = await prismadb.subscriptionUserMapping.findUnique({
-      where: { subscriptionId },
-      select: { userId: true },
+    // Using the existing UserSubscription model
+    const subscription = await prismadb.userSubscription.findUnique({
+      where: { paypalSubscriptionId: subscriptionId }, // Look up by paypalSubscriptionId
+      select: { userId: true }, // Select only the userId field
     });
 
-    return mapping ? mapping.userId : null;
+    return subscription ? subscription.userId : null;
   } catch (error) {
-    console.error("Error fetching user ID:", error.message || error);
+    console.error("Error fetching user ID:", (error as Error).message || error);
     return null;
   }
 }
+
