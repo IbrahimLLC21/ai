@@ -23,10 +23,7 @@ export async function POST(req: Request) {
       return new NextResponse("No subscription found", { status: 404 });
     }
 
-    // Create a base64-encoded authorization header for the PayPal API request
-    const authHeader = Buffer.from(
-      `${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}:${process.env.PAYPAL_SECRET}`
-    ).toString("base64");
+    const authHeader = Buffer.from(`${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}:${process.env.PAYPAL_SECRET}`).toString("base64");
 
     // Make the PayPal API request to cancel the subscription
     const response = await axios.post(

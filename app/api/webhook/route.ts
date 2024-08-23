@@ -4,7 +4,7 @@ import prismadb from "@/lib/prismadb";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    console.log("Webhook Payload:", JSON.stringify(body, null, 2)); // Log the full payload
+    console.log("Webhook Payload:", JSON.stringify(body, null, 2));
 
     if (!body.resource) {
       console.error("Resource is missing in the webhook payload");
