@@ -1,4 +1,4 @@
-"use client"; // Ensure this component is used in a client-side context
+'use client'; // Ensure this component is used in a client-side context
 
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'next-i18next';
@@ -10,6 +10,7 @@ const LanguageSwitcher = () => {
   const [currentPath, setCurrentPath] = useState('');
 
   useEffect(() => {
+    // Set the current path once on the client side
     if (typeof window !== 'undefined') {
       setCurrentPath(window.location.pathname);
     }
@@ -18,8 +19,11 @@ const LanguageSwitcher = () => {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const locale = e.target.value;
 
+    // Change language using i18n
     if (i18n && typeof i18n.changeLanguage === 'function') {
       i18n.changeLanguage(locale);
+
+      // Update URL to include locale without reloading the page
       router.replace(`${currentPath}?lang=${locale}`);
     } else {
       console.error('changeLanguage method is not available on i18n');
@@ -29,12 +33,12 @@ const LanguageSwitcher = () => {
   return (
     <div className="flex justify-end p-4">
       <select
-        id="language-switcher" // Added id attribute
-        name="language" // Added name attribute
+        id="language-switcher"
+        name="language"
         value={i18n.language}
         onChange={handleChange}
         className="bg-gray-800 text-white border border-gray-600 p-2 rounded"
-        autoComplete="off" // Optional: ensures autocomplete is off
+        autoComplete="off"
       >
         <option value="en">English</option>
         <option value="fr">Français</option>
