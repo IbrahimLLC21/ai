@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Ensure this component is used in a client-side context
 
 import React, { useState, useRef, useEffect } from "react";
 import { MessageSquare, Mic } from "lucide-react";
@@ -197,6 +197,7 @@ const ConversationPage = () => {
       <div className="px-4 lg:px-8">
         <div className="my-2">
           <select
+            name="language" // Add name attribute here
             value={selectedLang}
             onChange={(e) => setSelectedLang(e.target.value)}
             className="border rounded p-2"
@@ -220,9 +221,11 @@ const ConversationPage = () => {
                   <FormItem className="col-span-12 lg:col-span-8">
                     <FormControl className="m-0 p-0">
                       <Input
+                        id="prompt" // Add unique id attribute
                         disabled={isLoading}
                         placeholder={t("promptPlaceholder")}
                         className="pl-2 border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
+                        autoComplete="off" // Add autocomplete attribute
                         {...field}
                       />
                     </FormControl>
@@ -248,31 +251,31 @@ const ConversationPage = () => {
         </div>
         <div className="space-y-4 mt-4">
           {isLoading && (
-            <div className="p-8 rounded-lg w-full flex items-center justify-center bg-muted">
+            <div className="p-4">
               <Loader />
             </div>
-          )}
-          {messages.length === 0 && !isLoading && (
-            <Empty label={t("noConversationLabel")} />
-          )}
-          <div className="flex flex-col-reverse gap-y-4">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={cn(
-                  "p-8 w-full flex items-start gap-x-8 rounded-lg",
-                  message.role === "user"
-                    ? "bg-white border border-black/10"
-                    : "bg-muted"
-                )}
-              >
-                {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                <p className="text-sm">{message.content}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+           )}
+           {messages.length === 0 && !isLoading && (
+             <Empty label={t("noConversationLabel")} />
+           )}
+           <div className="flex flex-col-reverse gap-y-4">
+             {messages.map((message, index) => (
+               <div
+                 key={index}
+                 className={cn(
+                   "p-8 w-full flex items-start gap-x-8 rounded-lg",
+                   message.role === "user"
+                     ? "bg-white border border-black/10"
+                     : "bg-muted"
+                 )}
+               >
+                 {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
+                 <p className="text-sm">{message.content}</p>
+               </div>
+             ))}
+           </div>
+         </div>
+       </div>
       <UserDetailsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

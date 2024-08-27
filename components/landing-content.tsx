@@ -1,6 +1,6 @@
 "use client";
-
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare, FileText, Pencil, Plus, Minus } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
@@ -108,14 +108,14 @@ export default function LandingContent() {
       {/* Add Privacy Policy, Terms of Use, and Support Email */}
       <div className="mt-10 text-center text-gray-400">
         <p className="mb-2">
-          <a href="/privacy-policy.html" className="hover:underline">
+          <Link href="/privacy-policy.html" className="hover:underline">
             {t('privacyPolicy')}
-          </a>
+          </Link>
         </p>
         <p>
-          <a href="/terms-of-use.html" className="hover:underline">
+          <Link href="/terms-of-use.html" className="hover:underline">
             {t('termsAndConditions')}
-          </a>
+          </Link>
         </p>
         <p className="mt-4">
           Support Email: <a href="mailto:support@stellarai.net" className="hover:underline">support@stellarai.net</a>

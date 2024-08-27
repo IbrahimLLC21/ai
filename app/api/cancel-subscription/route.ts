@@ -1,4 +1,7 @@
 // /app/api/cancel-subscription/route.ts
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs'; 
+// /app/api/cancel-subscription/route.ts
 import { auth as clerkAuth, currentUser } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import axios from "axios";

@@ -34,32 +34,38 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({ isOpen, onClose, on
       <div style={{ padding: "20px" }}>
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <div>
-            <label style={labelStyle}>Name</label>
+            <label htmlFor="name" style={labelStyle}>Name</label>
             <input
+              id="name" // Added id attribute to input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              autoComplete="name" // Added autocomplete attribute
               style={inputStyle}
             />
           </div>
           <div>
-            <label style={labelStyle}>Position</label>
+            <label htmlFor="position" style={labelStyle}>Position</label>
             <input
+              id="position" // Added id attribute to input
               type="text"
               value={position}
               onChange={(e) => setPosition(e.target.value)}
               required
+              autoComplete="off" // No autocomplete for position field
               style={inputStyle}
             />
           </div>
           <div>
-            <label style={labelStyle}>Company</label>
+            <label htmlFor="company" style={labelStyle}>Company</label>
             <input
+              id="company" // Added id attribute to input
               type="text"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               required
+              autoComplete="organization" // Added autocomplete attribute
               style={inputStyle}
             />
           </div>

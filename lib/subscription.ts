@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { auth as clerkAuth } from "@clerk/nextjs";
 import prismadb from "@/lib/prismadb";
 

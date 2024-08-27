@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs'; 
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";

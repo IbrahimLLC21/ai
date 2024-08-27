@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs'; 
 import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 
@@ -14,10 +16,9 @@ export async function POST(req: Request) {
     const eventType = body.event_type;
     const resource = body.resource;
 
-    // Extract relevant information from the payload
     const subscriptionId = resource.id;
     const state = resource.state;
-    const planId = resource.plan?.id || 'unknown'; // Ensure planId is extracted correctly
+    const planId = resource.plan?.id || 'unknown';
     const currentPeriodEnd = new Date(resource.agreement_details?.final_payment_due_date || Date.now());
 
     console.log("Subscription ID:", subscriptionId);
@@ -40,18 +41,34 @@ export async function POST(req: Request) {
 
       if (existingSubscription) {
         console.log("Existing Subscription:", existingSubscription);
+        await prismadb.userSubscription.update({
+          where: { paypalSubscriptionId: subscriptionId },
+          data: {
+            paypalPlanId: planId,
+            paypalCurrentPeriodEnd: currentPeriodEnd,
+          },
+        });
+        console.log("Updated existing subscription record.");
       } else {
         console.log("No existing subscription found. Creating new record...");
         await prismadb.userSubscription.create({
           data: {
             userId,
             paypalSubscriptionId: subscriptionId,
-            paypalPlanId: planId, // Save the plan ID here
+            paypalPlanId: planId,
             paypalCurrentPeriodEnd: currentPeriodEnd,
           },
         });
         console.log("Created new subscription record.");
       }
+    } else if (eventType === "BILLING.SUBSCRIPTION.CANCELLED") {
+      console.log("Subscription cancelled:", subscriptionId);
+
+      // Optionally, delete the subscription record if appropriate
+      await prismadb.userSubscription.deleteMany({
+        where: { paypalSubscriptionId: subscriptionId },
+      });
+      console.log("Deleted subscription record.");
     }
 
     return new NextResponse(null, { status: 200 });
@@ -63,10 +80,9 @@ export async function POST(req: Request) {
 
 async function getUserIdFromSubscription(subscriptionId: string): Promise<string | null> {
   try {
-    // Using the existing UserSubscription model
     const subscription = await prismadb.userSubscription.findUnique({
-      where: { paypalSubscriptionId: subscriptionId }, // Look up by paypalSubscriptionId
-      select: { userId: true }, // Select only the userId field
+      where: { paypalSubscriptionId: subscriptionId },
+      select: { userId: true },
     });
 
     return subscription ? subscription.userId : null;
@@ -75,4 +91,3 @@ async function getUserIdFromSubscription(subscriptionId: string): Promise<string
     return null;
   }
 }
-

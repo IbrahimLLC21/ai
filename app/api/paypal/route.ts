@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs'; 
 import { auth as clerkAuth, currentUser } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import axios from "axios";

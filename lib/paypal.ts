@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import * as paypal from '@paypal/checkout-server-sdk';
 
 const environment = new paypal.core.SandboxEnvironment(

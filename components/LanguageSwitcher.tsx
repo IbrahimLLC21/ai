@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Ensure this component is used in a client-side context
 
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'next-i18next';
@@ -29,9 +29,12 @@ const LanguageSwitcher = () => {
   return (
     <div className="flex justify-end p-4">
       <select
+        id="language-switcher" // Added id attribute
+        name="language" // Added name attribute
         value={i18n.language}
         onChange={handleChange}
         className="bg-gray-800 text-white border border-gray-600 p-2 rounded"
+        autoComplete="off" // Optional: ensures autocomplete is off
       >
         <option value="en">English</option>
         <option value="fr">Français</option>

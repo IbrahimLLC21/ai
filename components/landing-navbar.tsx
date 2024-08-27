@@ -20,8 +20,13 @@ export default function LandingNavbar() {
   return (
     <nav className="p-4 bg-transparent flex items-center justify-between">
       <Link href="/" className="flex items-center">
-        <div className="relative h-12 w-12 mr-4">
-          <Image fill alt="Stellar Logo" src="/logo1.png" />
+        <div className="relative h-8 w-8 mr-4">
+          <Image
+            fill
+            alt="Stellar Logo"
+            src="/logo1.png"
+            sizes="(max-width: 768px) 100vw, 32px"
+          />
         </div>
         <h1 className={cn("text-2xl font-bold text-white", font.className)}>
           Stellar.Ai

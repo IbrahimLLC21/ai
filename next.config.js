@@ -6,7 +6,6 @@ const nextConfig = {
     domains: ["oaidalleapiprodscus.blob.core.windows.net"],
   },
   i18n, // This will use the i18n configuration from next-i18next.config.js
-  // Webpack configuration removed
   // Other Next.js config options can be added here
 };
 
